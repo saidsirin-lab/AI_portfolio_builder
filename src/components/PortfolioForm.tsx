@@ -46,12 +46,24 @@ export default function PortfolioForm() {
         body,
       });
 
+      const text = await response.text();
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Generation failed");
+        let message = "Generation failed";
+        try {
+          const data = JSON.parse(text);
+          message = data.error || message;
+        } catch {
+          // response wasn't JSON
+        }
+        throw new Error(message);
       }
 
-      const { html } = await response.json();
+      if (!text) {
+        throw new Error("Empty response from server. Please try again.");
+      }
+
+      const { html } = JSON.parse(text);
 
       // Store generated HTML in sessionStorage for the preview page
       sessionStorage.setItem("portfolio_html", html);

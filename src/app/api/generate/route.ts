@@ -66,8 +66,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ html });
   } catch (error) {
     console.error("Generation error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to generate portfolio. Please try again." },
+      { error: `Failed to generate portfolio: ${message}` },
       { status: 500 }
     );
   }
